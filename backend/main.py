@@ -80,11 +80,12 @@ def organize_route(payload: FolderRequest = Body(...)) -> dict[str, object]:
 
 
 @app.post("/undo")
-def undo_route(payload: UndoRequest = Body(default_factory=UndoRequest)) -> dict[str, object]:
+def undo_route(payload: UndoRequest | None = Body(default=None)) -> dict[str, object]:
     """Restore the most recent organization session."""
 
     try:
-        return undo_last_organization(payload.path)
+        target = payload.path if payload else None
+        return undo_last_organization(target)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:  # pragma: no cover
@@ -114,4 +115,3 @@ def ai_suggestions_route(path: str = Query(..., min_length=1)) -> dict[str, obje
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:  # pragma: no cover
         raise HTTPException(status_code=500, detail=f"AI suggestions failed: {exc}") from exc
-

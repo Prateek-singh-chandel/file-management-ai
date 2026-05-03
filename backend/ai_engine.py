@@ -6,9 +6,6 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from utils import format_bytes
-
-
 def _compact_stats(scan_report: dict[str, Any]) -> dict[str, Any]:
     """Reduce the scan payload to the signals an AI assistant needs."""
 
@@ -224,4 +221,3 @@ def generate_suggestions(scan_report: dict[str, Any]) -> dict[str, Any]:
     if openai_result:
         return openai_result
     return _default_cards(scan_report)
-

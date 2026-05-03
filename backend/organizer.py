@@ -112,6 +112,7 @@ def _summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
                 "count": len(items),
                 "files": sorted(items, key=lambda item: item["path"]),
                 "reclaimableBytes": sum(item["size"] for item in items[1:]),
+                "reclaimableBytesHuman": format_bytes(sum(item["size"] for item in items[1:])),
             }
         )
 
@@ -236,12 +237,7 @@ def organize_folder(folder_path: str | Path) -> dict[str, Any]:
     history.setdefault("sessions", []).append(session)
     save_history(history)
 
-    updated_preview_paths = [
-        str(Path(ORGANIZER_FOLDER) / record["category"] / source.relative_to(root).parent / source.name).replace("\\", "/")
-        if source.relative_to(root).parent != Path(".")
-        else str(Path(ORGANIZER_FOLDER) / record["category"] / source.name).replace("\\", "/")
-        for record, source in [(record, Path(record["path"])) for record in records if Path(record["path"]).exists()]
-    ]
+    updated_preview_paths = [Path(move["destination"]).relative_to(root).as_posix() for move in moved]
     after_tree = build_tree(updated_preview_paths)
 
     return {
@@ -332,4 +328,3 @@ def build_stats_only(folder_path: str | Path) -> dict[str, Any]:
     """Return only the statistics block for the /stats endpoint."""
 
     return scan_folder(folder_path)["stats"]
-
