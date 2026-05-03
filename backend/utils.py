@@ -334,6 +334,7 @@ def build_category_distribution(records: list[dict[str, Any]]) -> list[dict[str,
                 "category": category,
                 "count": bucket["count"],
                 "size": bucket["size"],
+                "sizeHuman": format_bytes(bucket["size"]),
                 "percentage": round((bucket["count"] / total_files) * 100, 1),
             }
         )
@@ -355,4 +356,3 @@ def detect_screenshot_file(file_record: dict[str, Any]) -> bool:
     return bool(re.search(r"(screenshot|screen shot|screen-shot|capture|snip)", name)) or (
         file_record["category"] == "Images" and any(token in name for token in ("screen", "shot", "capture", "snip"))
     )
-

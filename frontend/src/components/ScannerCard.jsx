@@ -78,7 +78,7 @@ export default function ScannerCard({
                 className="input-field pl-11"
                 value={folderPath}
                 onChange={(event) => setFolderPath(event.target.value)}
-                placeholder="C:\\Users\\YourName\\Desktop\\Messy Folder"
+                placeholder={'C:\\Users\\YourName\\Desktop\\Messy Folder'}
                 autoComplete="off"
               />
             </div>

@@ -104,14 +104,22 @@ function AppShell() {
     }
 
     try {
-      const result = await withLoading('organize', () => organizeFolder(folderPath.trim()));
+      const payload = await withLoading('organize', async () => {
+        const result = await organizeFolder(folderPath.trim());
+        const refreshed = await scanFolder(folderPath.trim());
+        return { result, refreshed };
+      });
       pushToast({
         tone: 'success',
         title: 'Files organized',
-        message: `${result.movedCount} files moved into category folders.`,
+        message: `${payload.result.movedCount} files moved into category folders.`,
       });
-      const refreshed = await scanFolder(folderPath.trim());
-      setScanData({ ...refreshed, organizedResult: result });
+      setScanData({
+        ...payload.refreshed,
+        beforePreview: payload.result.beforePreview,
+        afterPreview: payload.result.afterPreview,
+        organizedResult: payload.result,
+      });
       setPage('dashboard');
     } catch (error) {
       stopProgress(0);
@@ -134,14 +142,17 @@ function AppShell() {
     }
 
     try {
-      const result = await withLoading('undo', () => undoFolder(folderPath.trim()));
+      const payload = await withLoading('undo', async () => {
+        const result = await undoFolder(folderPath.trim());
+        const refreshed = await scanFolder(folderPath.trim());
+        return { result, refreshed };
+      });
       pushToast({
         tone: 'success',
         title: 'Undo complete',
-        message: `${result.restoredCount} files restored to their original locations.`,
+        message: `${payload.result.restoredCount} files restored to their original locations.`,
       });
-      const refreshed = await scanFolder(folderPath.trim());
-      setScanData({ ...refreshed, undoResult: result });
+      setScanData({ ...payload.refreshed, undoResult: payload.result });
       setPage('dashboard');
     } catch (error) {
       stopProgress(0);
