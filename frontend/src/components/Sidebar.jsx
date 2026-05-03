@@ -1,1 +1,0 @@
-export default function Sidebar(){return <aside className='glass rounded-2xl p-4 h-fit'><h2 className='text-cyan-300 font-bold'>Smart Organizer</h2><p className='text-slate-300 text-sm mt-2'>AI cleanup assistant</p></aside>}
